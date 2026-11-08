@@ -110,8 +110,11 @@ export default class Thermostat extends RingSocketDevice {
         if (mode !== this.data.publishedMode) {
             if (mode === 'off') {
                 this.mqttPublish(this.entity.thermostat.temperature_state_topic, 'None')
-                this.mqttPublish(this.entity.thermostat.temperature_low_state_topic, 'None')
-                this.mqttPublish(this.entity.thermostat.temperature_high_state_topic, 'None')
+                // Low/high setpoint topics only exist when the thermostat supports auto mode
+                if (this.entity.thermostat.modes.includes('auto')) {
+                    this.mqttPublish(this.entity.thermostat.temperature_low_state_topic, 'None')
+                    this.mqttPublish(this.entity.thermostat.temperature_high_state_topic, 'None')
+                }
             } else if (this.entity.thermostat.modes.includes('auto') && mode !== this.data.publishedMode) {
                 if (mode === 'auto') {
                     this.mqttPublish(this.entity.thermostat.temperature_state_topic, 'None')
